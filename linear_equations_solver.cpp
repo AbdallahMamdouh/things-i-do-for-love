@@ -1,40 +1,31 @@
 #include <iostream>
 using namespace std;
 template <class T>
-T **submat(T **x,int size)
-{
-        int length =size,width=size;
-
-        T ** temp = new  T* [length-1];
-        for (int i = 0; i < length - 1; i++)
-            temp[i] = new T[length-1];
-        for (int i = 0; i < length - 1; i++)
-            for (int j = 0; j < length - 1; j--)
-                temp[i][j] = x[i + 1][j + 1];
-    return temp;
-}
-template <class T>
-void Swap(T &x, T &y)
-{
-    T temp = x;
-    x = y;
-    y = temp;
-}
-template <class T>
-double determinant(T **x,int size)
-{
-    int length=size,width=size;
-    double result = 0;
-    if (size == 2)
-        return x[0][0] * x[1][1] - x[1][0] * x[0][1];
-    else{
-        for (int i = 0; i < length; i++){
-                for (int j = 0; j < length; j++)
-                    Swap(x[i][0], x[i][j]);
-                result = x[0][0] * determinant(submat(x,size),size);
+double determinant( T **matrix, int n) {
+    int det = 0;
+    T** submatrix=new T*[n-1];
+    for(int i=0;i<n;i++){
+        submatrix[i]=new T[n-1];
+    }
+    if (n == 2)
+        return ((matrix[0][0] * matrix[1][1]) - (matrix[1][0] * matrix[0][1]));
+    else {
+        for (int x = 0; x < n; x++) {
+            int subi = 0;
+            for (int i = 1; i < n; i++) {
+                int subj = 0;
+                for (int j = 0; j < n; j++) {
+                    if (j == x)
+                        continue;
+                    submatrix[subi][subj] = matrix[i][j];
+                    subj++;
+                }
+                subi++;
+            }
+            det = det + (pow(-1, x) * matrix[0][x] * determinant( submatrix, n - 1 ));
         }
     }
-    return result;
+    return det;
 }
 class matrix{
 public:
@@ -92,7 +83,7 @@ int main() {
     for(int i=0;i<n;i++){
         temp=m;
         deltax[i]=f(temp,y,i,n);
-        ans[i]=deltax[i]/delta;
+        ans[i] = deltax[i] / delta;
         cout<<"x"<<i<<" = "<<ans[i]<<'\n';
     }
 return 0;
